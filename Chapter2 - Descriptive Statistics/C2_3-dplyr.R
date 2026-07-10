@@ -208,52 +208,40 @@ counties_selected <- counties %>%
 
 #Bài tập 2.4:
 # (1) Sắp xếp các quan sát của biến public_work theo thứ tự giảm dần
-counties_selected <- counties %>%
-  select(state, county, population, private_work,
-         public_work, self_employed)
 counties_selected %>%
   arrange(desc(public_work))
 
 # (2) Chỉ tìm các county có dân số trên một triệu
-counties_selected <- counties %>%
-  select(state, county, population)
 counties_selected %>%
   filter(population > 10^6)
 
 # (3) Chỉ tìm các county trong tiểu bang California cũng có dân số trên một triệu
-counties_selected <- counties %>%
-  select(state, county, population)
 counties_selected %>%
   filter(state == "California", population > 10^6)
 
 # (4) Lọc các county trong tiểu bang Texas có hơn mười nghìn người (10000) và
 #     sắp xếp giảm dần theo tỷ lệ phần trăm người làm việc trong khu vực tư nhân
-counties_selected <- counties %>%
-  select(state, county, population, private_work,
-         public_work, self_employed)
 counties_selected %>%
   filter(state == "Texas", population > 10000) %>%
   arrange(desc(private_work))
 
 #Bài tập 2.5:
-counties_selected <- counties %>%
-  select(state, county, population, public_work)
-counties_selected %>%
-  mutate(public_workers = population * public_work / 100) %>%
+counties_selected %>% 
+  mutate(public_workers = as.integer(public_work * population / 100)) %>% 
   arrange(desc(public_workers))
 
 #Bài tập 2.6:
 counties %>%
   select(state, county, population, men, women) %>%
-  mutate(proportion_women = women / population)
+  mutate(proportion_women = women / population * 100)
 
 #Bài tập 2.7:
-counties %>%
-  select(state, county, population, men) %>%
-  mutate(proportion_men = men / population) %>%
-  filter(population >= 10^4) %>%
+counties_men <- counties %>% 
+  mutate(proportion_men = men / population * 100) %>% 
+  select(state, county, population, proportion_men) %>% 
+  filter(population >= 10000) %>% 
   arrange(desc(proportion_men))
-# Quận có tỷ lệ nam giới cao nhất là dòng đầu tiên của kết quả trên (xem cột county)
+counties_men[1,]
 
 #Bài tập 2.8:
 counties_selected <- counties %>%
@@ -268,13 +256,14 @@ counties_selected %>%
 #Bài tập 2.9:
 counties_selected <- counties %>%
   select(state, county, population, land_area)
-counties_selected %>%
-  group_by(state) %>%
+counties_selected %>% 
+  group_by(state) %>% 
   summarize(
     total_area = sum(land_area),
     total_population = sum(population)
-  ) %>%
-  mutate(density = total_population / total_area) %>%
+  ) %>% 
+  ungroup() %>% 
+  mutate(density = total_population / total_area) %>% 
   arrange(desc(density))
 
 #Bài tập 2.10:
@@ -291,6 +280,17 @@ by_region_state
 by_region_state %>%
   ungroup() %>%
   group_by(region) %>%
+  summarize(
+    average_pop = mean(total_pop),
+    median_pop = median(total_pop)
+  )
+
+# Cách khác: vì summarize() tự bỏ group theo biến cuối (state), giữ lại các biến đầu (region)
+counties_selected %>% 
+  group_by(region, state) %>% 
+  summarize(
+    total_pop = sum(population)
+  ) %>% 
   summarize(
     average_pop = mean(total_pop),
     median_pop = median(total_pop)

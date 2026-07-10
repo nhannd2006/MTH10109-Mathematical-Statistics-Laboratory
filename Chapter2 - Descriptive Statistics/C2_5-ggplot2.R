@@ -1,4 +1,4 @@
-# 1/4 - 24KDL
+# 2/4 - 24KDL
 # Chương 2.5: GRAMMAR OF GRAPHICS VÀ ggplot2
 
 # ─────────────────────────────────────────────
@@ -194,8 +194,7 @@ ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm)) +
     subtitle = "Data from palmerpenguins package"
   ) +
   theme_minimal()
-# Nhận xét: mối quan hệ không rõ ràng theo 1 xu hướng chung (có vẻ âm nhẹ),
-# nhưng nếu tách theo species sẽ thấy quan hệ dương rõ ràng hơn trong từng loài.
+# Nhận xét: mối quan hệ không rõ ràng theo 1 xu hướng chung.
 
 # (2) Biểu đồ phân tán giữa species và bill_depth_mm
 ggplot(penguins, aes(x = species, y = bill_depth_mm)) +
@@ -206,7 +205,7 @@ ggplot(penguins, aes(x = species, y = bill_depth_mm)) +
   ) +
   theme_minimal()
 # species là biến categorical nên geom_point() không phù hợp (điểm chồng lên nhau theo cột) ->
-# nên dùng geom_boxplot() hoặc geom_jitter() thay vì geom_point()
+# nên dùng geom_boxplot() thay vì geom_point()
 
 # (3) ggplot(data = penguins) + geom_point() báo lỗi vì chưa khai báo aes(x = ..., y = ...)
 # Khắc phục: thêm mapping = aes(x = ..., y = ...) cho ggplot() hoặc cho geom_point()
@@ -244,10 +243,9 @@ ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
 ggplot() +
   geom_point(data = penguins, mapping = aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_smooth(data = penguins, mapping = aes(x = flipper_length_mm, y = body_mass_g))
-# Hai plot cho kết quả giống nhau, nhưng cách hoạt động khác nhau:
+
 # - Plot 1: data + mapping khai báo ở ggplot() (global) -> mọi geom phía sau tự động kế thừa.
 # - Plot 2: ggplot() chỉ tạo khung tranh (canvas) rỗng, mỗi geom phải tự khai báo data/mapping riêng (local).
-#   Cách 2 hữu ích khi các geom cần dùng data khác nhau.
 
 #Bài tập 1.3:
 ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g, color = species)) +
@@ -286,10 +284,15 @@ ggplot(diamonds, aes(x = carat)) +
 
 #Bài tập 3.1:
 # (1) So sánh phân bố body_mass_g giữa species theo 2 phương pháp
-ggplot(penguins, aes(x = species, y = body_mass_g)) +
-  geom_boxplot()
-ggplot(penguins, aes(x = body_mass_g, fill = species)) +
-  geom_density(alpha = 0.4)
+penguins %>% 
+  ggplot(aes(x = body_mass_g, y = species, fill = species)) +
+  geom_boxplot() +
+  geom_violin(alpha = 0.4)
+penguins %>% 
+  ggplot(aes(x = body_mass_g)) +
+  geom_histogram(aes(y = after_stat(density), fill = species),
+                 position = "identity", alpha = 0.4) +
+  geom_density(aes(color = species), linewidth = 1.5)
 
 # (2) Mối quan hệ giữa bill_length_mm và bill_depth_mm, có khác nhau theo species không
 ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm)) +
@@ -302,7 +305,7 @@ ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
 # (đây là ví dụ về nghịch lý Simpson - Simpson's paradox)
 
 # (3) So sánh body_mass_g giữa các nhóm sex
-ggplot(penguins, aes(x = sex, y = body_mass_g)) +
+ggplot(penguins, aes(x = sex, y = body_mass_g, fill = sex)) +
   geom_boxplot(na.rm = TRUE)
 
 #Bài tập 3.2:

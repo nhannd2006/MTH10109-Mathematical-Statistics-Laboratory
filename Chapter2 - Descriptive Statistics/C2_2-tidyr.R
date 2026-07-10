@@ -20,7 +20,7 @@
 # Wide: các giá trị của cùng một biến số dàn trải ra nhiều cột (thường gặp trong Excel)
 # Long: TIDY - tất cả giá trị của một biến số được gom vào một cột duy nhất
 
-install.packages("tidyr")   # chạy 1 lần
+# install.packages("tidyr")
 library(tidyr)
 
 # Chuyển dữ liệu từ dạng wide sang long: pivot_longer()
@@ -33,7 +33,7 @@ head(Experiment)   # Subject1..Subject4 cần gộp lại thành 2 biến: Subje
 
 pivot_longer(
   data = Experiment,
-  cols = -Time,   # lấy tất cả các cột trừ Time
+  cols = -Time,
   # cols = c(Subject1, Subject2, Subject3, Subject4),
   # cols = Subject1:Subject4,
   # cols = 2:5,
@@ -95,29 +95,22 @@ experiment_tidy <- data.frame(
 experiment_tidy
 
 #Bài tập 2.1:
-grades <- read.csv("data/grades_wide.csv", header = TRUE)
-head(grades)
-pivot_longer(
-  data = grades,
-  cols = -Hoc_vien,
-  names_to = "Subject",
-  values_to = "Response"
-)
+setwd("D:/GitHub/MTH10109-Mathematical-Statistics-Laboratory/")
+grades_wide <- read.csv("data/grades_wide.csv", header = TRUE)
+pivot_longer(data = grades_wide,
+             col = c("Toan", "Ly", "Hoa"),
+             names_to = "Mon_hoc",
+             values_to = "Diem")
 
-healths <- read.csv("data/healths_wide.csv")
-head(healths)
-pivot_longer(
-  data = healths,
-  cols = starts_with("Tuan_"),
-  names_to = "Tuan",
-  values_to = "Gia tri"
-)
+healths_wide <- read.csv("data/healths_wide.csv")
+pivot_longer(data = healths_wide,
+             col = starts_with("Tuan_"),
+             names_to = "Tuan",
+             values_to = "Chi_so")
 
-sales <- read.csv("data/sales_wide.csv")
-head(sales)
-pivot_longer(
-  data = sales,
-  cols = X2021:X2023,
-  names_to = "Year",
-  values_to = "Number"
-)
+sales_wide <- read.csv("data/sales_wide.csv")
+pivot_longer(data = sales_wide,
+             col = X2021:X2023,
+             names_to = "Nam",
+             names_prefix = "X", # bỏ "X" dư thừa
+             values_to = "Doanh_so")
