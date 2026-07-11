@@ -185,28 +185,32 @@ df %>%
   filter(age >= 60) %>%
   filter(married == "Yes")
 
-#Bài tập 1.2:
+#Bài tập 1.2: Quan sát đoạn code và mô tả chuỗi lệnh này đang muốn tìm/làm gì?
 # (a) Chuỗi lệnh giữ lại các quan sát tại quốc gia Singapore,
 #     sau đó chỉ giữ lại hai cột income và education.
 # (b) Chuỗi lệnh giữ lại các quan sát có satisfaction > 0.7 và gender là "Male"
 #     (tức lọc những nam giới có mức độ hài lòng trên 0.7).
 
-#Bài tập 2.1:
+#Bài tập 2.1: Hàm glimpse() trong dplyr tương tự như hàm str() trong Base R.
+# Tải dữ liệu counties.rds, sử dụng glimpse() cho dữ liệu này.
+# Dữ liệu này có bao nhiêu biến? Giá trị đầu tiên của biến income là bao nhiêu?
 counties <- readRDS("data/counties.rds")
 glimpse(counties)
 ncol(counties)          # số biến của dữ liệu
 counties$income[1]      # giá trị đầu tiên của biến income
 
-#Bài tập 2.2:
+#Bài tập 2.2: Chọn 4 cột sau trong counties: state, county, population, poverty.
 counties %>%
   select(state, county, population, poverty)
 
-#Bài tập 2.3:
+#Bài tập 2.3: Tạo data frame mới counties_selected với các biến sau từ counties:
+# state, county, population, private_work, public_work, self_employed.
 counties_selected <- counties %>%
   select(state, county, population,
          private_work, public_work, self_employed)
 
-#Bài tập 2.4:
+#Bài tập 2.4: Dùng counties_selected, các biến private_work, public_work, self_employed
+# mô tả tỷ lệ % số người làm việc cho chính phủ, tư nhân, hoặc tự chủ.
 # (1) Sắp xếp các quan sát của biến public_work theo thứ tự giảm dần
 counties_selected %>%
   arrange(desc(public_work))
@@ -225,17 +229,27 @@ counties_selected %>%
   filter(state == "Texas", population > 10000) %>%
   arrange(desc(private_work))
 
-#Bài tập 2.5:
+#Bài tập 2.5: Tính toán số lượng nhân viên chính phủ.
+# (1) Dùng mutate() thêm cột public_workers - số lượng người làm trong cơ quan chính phủ
+# (2) Sắp xếp cột mới theo thứ tự giảm dần
 counties_selected %>% 
   mutate(public_workers = as.integer(public_work * population / 100)) %>% 
   arrange(desc(public_workers))
 
-#Bài tập 2.6:
+#Bài tập 2.6: Tính tỷ lệ phần trăm phụ nữ trong một quận. Bộ dữ liệu có các cột
+# thể hiện tổng số (không phải %) nam và nữ ở mỗi quận. Dùng dữ liệu này cùng
+# biến dân số để tính tỷ lệ nam (hoặc nữ) trong mỗi quận.
+# (1) Chọn các cột: state, county, population, men, women
+# (2) Thêm biến mới proportion_women - tỷ lệ dân số là phụ nữ trong quận
 counties %>%
   select(state, county, population, men, women) %>%
   mutate(proportion_women = women / population * 100)
 
-#Bài tập 2.7:
+#Bài tập 2.7: Tìm những quận có tỷ lệ nam giới cao nhất.
+# (1) Thêm cột proportion_men - tỷ lệ nam giới, giữ nguyên state, county, population
+# (2) Lọc các quận có dân số ít nhất mười nghìn (10000)
+# (3) Sắp xếp các quận theo thứ tự giảm dần của tỷ lệ nam giới
+# (4) Quận nào có tỷ lệ nam giới cao nhất trong dữ liệu?
 counties_men <- counties %>% 
   mutate(proportion_men = men / population * 100) %>% 
   select(state, county, population, proportion_men) %>% 
@@ -243,7 +257,9 @@ counties_men <- counties %>%
   arrange(desc(proportion_men))
 counties_men[1,]
 
-#Bài tập 2.8:
+#Bài tập 2.8: Summarize tập dữ liệu để tìm các cột sau: min_population
+# (dân số nhỏ nhất), max_unemployment (tỷ lệ thất nghiệp cao nhất) và
+# average_income (giá trị trung bình của biến thu nhập).
 counties_selected <- counties %>%
   select(county, population, income, unemployment)
 counties_selected %>%
@@ -253,7 +269,11 @@ counties_selected %>%
     average_income = mean(income)
   )
 
-#Bài tập 2.9:
+#Bài tập 2.9: Summarize theo state. Cột land_area hiển thị diện tích đất
+# (dặm vuông). Tóm tắt population và diện tích đất theo tiểu bang để tìm
+# mật độ (người/dặm vuông).
+# (1) Nhóm theo state, summarize tạo total_area và total_population
+# (2) Thêm cột density = tổng dân số / tổng diện tích, sắp xếp giảm dần
 counties_selected <- counties %>%
   select(state, county, population, land_area)
 counties_selected %>% 
@@ -266,17 +286,18 @@ counties_selected %>%
   mutate(density = total_population / total_area) %>% 
   arrange(desc(density))
 
-#Bài tập 2.10:
+#Bài tập 2.10: Summarize theo state và region.
+# (1) Summarize tổng dân số (total_pop) theo mỗi tổ hợp region + state
+# (2) Tibble vẫn được nhóm theo region; summarize() lần nữa để tính dân số
+#     trung bình (average_pop) và trung vị (median_pop) của các state trong mỗi region
 counties_selected <- counties %>%
   select(region, state, county, population)
 
-# (1) Tổng dân số theo từng tổ hợp region + state
 by_region_state <- counties_selected %>%
   group_by(region, state) %>%
   summarize(total_pop = sum(population))
 by_region_state
 
-# (2) Dân số trung bình và trung vị của các state trong từng region
 by_region_state %>%
   ungroup() %>%
   group_by(region) %>%

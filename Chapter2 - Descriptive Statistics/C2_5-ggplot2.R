@@ -177,7 +177,10 @@ ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
 
 
 #========================================#
-#Bài tập 1.1:
+#Bài tập 1.1: Tìm hiểu bộ dữ liệu penguins.
+# 1. Có bao nhiêu dòng? Bao nhiêu biến?
+# 2. Biến bill_depth_mm mô tả điều gì? (đọc ?penguins)
+# 3. Biến species, flipper_length_mm, và body_mass_g mô tả cái gì?
 glimpse(penguins)
 ?penguins
 # 1. Số dòng/biến: xem trong glimpse() (Rows/Columns)
@@ -186,7 +189,8 @@ glimpse(penguins)
 #    body_mass_g: khối lượng cơ thể (g)
 
 #Bài tập 1.2:
-# (1) Biểu đồ phân tán giữa bill_depth_mm (y) và bill_length_mm (x)
+# (1) Vẽ biểu đồ phân tán giữa bill_depth_mm (trục y) và bill_length_mm (trục x).
+#     Mô tả mối quan hệ giữa hai biến này.
 ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm)) +
   geom_point() +
   labs(
@@ -196,7 +200,8 @@ ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm)) +
   theme_minimal()
 # Nhận xét: mối quan hệ không rõ ràng theo 1 xu hướng chung.
 
-# (2) Biểu đồ phân tán giữa species và bill_depth_mm
+# (2) Điều gì xảy ra nếu vẽ biểu đồ phân tán giữa species và bill_depth_mm?
+#     Lựa chọn geom nào sẽ tốt hơn?
 ggplot(penguins, aes(x = species, y = bill_depth_mm)) +
   geom_point() +
   labs(
@@ -207,17 +212,22 @@ ggplot(penguins, aes(x = species, y = bill_depth_mm)) +
 # species là biến categorical nên geom_point() không phù hợp (điểm chồng lên nhau theo cột) ->
 # nên dùng geom_boxplot() thay vì geom_point()
 
-# (3) ggplot(data = penguins) + geom_point() báo lỗi vì chưa khai báo aes(x = ..., y = ...)
+# (3) Tại sao đoạn mã sau lại báo lỗi và bạn sẽ khắc phục nó như thế nào?
+#     ggplot(data = penguins) + geom_point()
+# ggplot(data = penguins) + geom_point() báo lỗi vì chưa khai báo aes(x = ..., y = ...)
 # Khắc phục: thêm mapping = aes(x = ..., y = ...) cho ggplot() hoặc cho geom_point()
 
-# (4) na.rm trong geom_point(): quyết định cách xử lý giá trị NA khi vẽ.
+# (4) Tham số na.rm trong geom_point() có tác dụng gì? Giá trị mặc định là gì?
+#     Tạo một biểu đồ phân tán trong đó bạn dùng thành công na.rm = TRUE.
+# na.rm trong geom_point(): quyết định cách xử lý giá trị NA khi vẽ.
 # Mặc định na.rm = FALSE (sẽ có warning về các dòng bị loại vì missing values).
 # na.rm = TRUE: loại NA khỏi dữ liệu khi vẽ mà không báo warning.
 ggplot(penguins, aes(flipper_length_mm, body_mass_g)) +
   geom_point(na.rm = TRUE) +
   labs(title = "Biểu đồ dùng na.rm = TRUE sẽ không còn warning")
 
-# (5) Thêm caption
+# (5) Thêm chú thích (caption) vào biểu đồ đã tạo ở bài tập trước:
+#     "Dữ liệu đến từ gói palmerpenguins."
 ggplot(penguins, aes(flipper_length_mm, body_mass_g)) +
   geom_point(na.rm = TRUE) +
   labs(
@@ -227,14 +237,16 @@ ggplot(penguins, aes(flipper_length_mm, body_mass_g)) +
   ) +
   theme_minimal()
 
-# (6) Tạo lại hình ảnh: color theo bill_depth_mm (biến liên tục) + geom_smooth
+# (6) Tạo lại hình ảnh trực quan sau (color = bill_depth_mm, kèm geom_smooth).
+#     Cho nhận xét: nếu đổi color theo biến định lượng thì màu sắc khác gì so
+#     với theo biến phân loại? Đổi color thành shape cho bill_depth_mm thì sao?
 ggplot(penguins, aes(flipper_length_mm, body_mass_g)) +
   geom_point(aes(color = bill_depth_mm), na.rm = TRUE) +
   geom_smooth(method = "lm")
 # Nếu color là biến định lượng: thang màu là gradient liên tục (đậm nhạt), không phải các màu rời rạc như biến phân loại
 # Nếu đổi color thành shape cho bill_depth_mm: sẽ báo lỗi/warning vì shape chỉ dùng được cho biến rời rạc, không dùng được cho biến liên tục
 
-# (7) So sánh 2 plot
+# (7) Hai plot dưới đây giống nhau hay khác nhau? Tại sao?
 # Plot thứ nhất
 ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point() +
@@ -247,7 +259,7 @@ ggplot() +
 # - Plot 1: data + mapping khai báo ở ggplot() (global) -> mọi geom phía sau tự động kế thừa.
 # - Plot 2: ggplot() chỉ tạo khung tranh (canvas) rỗng, mỗi geom phải tự khai báo data/mapping riêng (local).
 
-#Bài tập 1.3:
+#Bài tập 1.3: Chuyển đổi đoạn code không dùng tham số data của ggplot() và có dùng pipeline.
 ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g, color = species)) +
   geom_point()
 
@@ -255,23 +267,28 @@ penguins %>%
   ggplot(aes(x = flipper_length_mm, y = body_mass_g, color = species)) +
   geom_point()
 
-#Bài tập 2.1:
-# (1) Gán species cho thuộc tính trục y
+#Bài tập 2.1: Thực hiện các yêu cầu dưới đây.
+# (1) Vẽ biểu đồ cột thể hiện species, gán mỗi loài cho một thuộc tính thẩm mỹ
+#     của trục y. Biểu đồ này khác biệt như thế nào?
 ggplot(penguins, aes(y = species)) +
   geom_bar()
 # Biểu đồ cột nằm ngang thay vì thẳng đứng, dễ đọc tên loài hơn khi tên dài
 
-# (2)
+# (2) Hai biểu đồ sau đây khác nhau như thế nào? Thuộc tính thẩm mỹ nào,
+#     color hay fill, hữu ích hơn để thay đổi màu sắc của các cột?
 ggplot(penguins, aes(x = species)) +
   geom_bar(color = "red")   # chỉ tô viền cột màu đỏ
 ggplot(penguins, aes(x = species)) +
   geom_bar(fill = "red")    # tô toàn bộ phần thân cột màu đỏ
 # fill hữu ích hơn để đổi màu cột vì geom_bar() là geom có diện tích
 
-# (3) bins trong geom_histogram() quy định số lượng cột (khoảng chia) của histogram.
+# (3) Tham số bins trong hàm geom_histogram() có tác dụng gì?
+# bins trong geom_histogram() quy định số lượng cột (khoảng chia) của histogram.
 # Mặc định bins = 30.
 
-# (4)
+# (4) Hãy tạo biểu đồ tần suất (histogram) cho biến carat trong tập dữ liệu
+#     diamonds có sẵn khi tải gói tidyverse. Thử nghiệm với các độ rộng bin
+#     khác nhau. Độ rộng bin nào cho thấy các mẫu thú vị nhất?
 data("diamonds")
 ggplot(diamonds, aes(x = carat)) +
   geom_histogram(binwidth = 0.1)
@@ -282,8 +299,9 @@ ggplot(diamonds, aes(x = carat)) +
 # binwidth = 0.01 cho thấy nhiều mẫu thú vị nhất (các đỉnh nhọn tại carat tròn số như 0.3, 0.5, 1, 1.5, 2...)
 # do xu hướng làm tròn carat khi cắt kim cương
 
-#Bài tập 3.1:
-# (1) So sánh phân bố body_mass_g giữa species theo 2 phương pháp
+#Bài tập 3.1: Dùng bộ dữ liệu penguins.
+# (1) So sánh phân bố biến body_mass_g giữa các loài chim cánh cụt (species)
+#     theo 2 phương pháp.
 penguins %>% 
   ggplot(aes(x = body_mass_g, y = species, fill = species)) +
   geom_boxplot() +
@@ -294,7 +312,8 @@ penguins %>%
                  position = "identity", alpha = 0.4) +
   geom_density(aes(color = species), linewidth = 1.5)
 
-# (2) Mối quan hệ giữa bill_length_mm và bill_depth_mm, có khác nhau theo species không
+# (2) Phân tích mối quan hệ giữa bill_length_mm và bill_depth_mm, và xem mối
+#     quan hệ này có khác nhau theo species hay không.
 ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm)) +
   geom_point(na.rm = TRUE) +
   geom_smooth(method = "lm", na.rm = TRUE)
@@ -304,31 +323,31 @@ ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
 # Khi gộp chung, quan hệ có vẻ âm; nhưng khi tách theo species, mỗi loài đều có quan hệ dương rõ ràng
 # (đây là ví dụ về nghịch lý Simpson - Simpson's paradox)
 
-# (3) So sánh body_mass_g giữa các nhóm sex
+# (3) So sánh body_mass_g giữa các nhóm sex.
 ggplot(penguins, aes(x = sex, y = body_mass_g, fill = sex)) +
   geom_boxplot(na.rm = TRUE)
 
-#Bài tập 3.2:
-# (1) Quy mô và cơ cấu giới tính theo loài -> cột chồng (stack)
+#Bài tập 3.2: Dùng data penguins và chọn biểu đồ thanh phù hợp để thể hiện:
+# 1. Quy mô và cơ cấu giới tính theo loài.
+# 2. So sánh số lượng giới tính giữa các loài.
+# 3. Tỷ lệ giới tính trong từng loài.
+# 4. Phân bố loài theo từng đảo.
+# 5. So sánh số lượng loài giữa các đảo.
+# 6. Tỷ lệ loài trên từng đảo.
 ggplot(penguins, aes(x = species, fill = sex)) +
   geom_bar(position = "stack")
 
-# (2) So sánh số lượng giới tính giữa các loài -> cột kề (dodge)
 ggplot(penguins, aes(x = species, fill = sex)) +
   geom_bar(position = "dodge")
 
-# (3) Tỷ lệ giới tính trong từng loài -> cột tỷ lệ (fill)
 ggplot(penguins, aes(x = species, fill = sex)) +
   geom_bar(position = "fill")
 
-# (4) Phân bố loài theo từng đảo -> cột chồng
 ggplot(penguins, aes(x = island, fill = species)) +
   geom_bar(position = "stack")
 
-# (5) So sánh số lượng loài giữa các đảo -> cột kề
 ggplot(penguins, aes(x = island, fill = species)) +
   geom_bar(position = "dodge")
 
-# (6) Tỷ lệ loài trên từng đảo -> cột tỷ lệ
 ggplot(penguins, aes(x = island, fill = species)) +
   geom_bar(position = "fill")

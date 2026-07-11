@@ -77,7 +77,7 @@ pivot_longer(
 
 
 #========================================#
-#Bài tập 1.1:
+#Bài tập 1.1: Chuyển data table sau đúng theo nguyên tắc tidy data (làm thủ công).
 # Bảng gốc (wide):
 #   Time  Subject1  Subject2  Subject3  Subject4
 #   T1    12        9         16        12
@@ -94,23 +94,24 @@ experiment_tidy <- data.frame(
 )
 experiment_tidy
 
-#Bài tập 2.1:
+#Bài tập 2.1: Import các file grades_wide.csv, healths_wide.csv, và sales_wide.csv.
+# Sau đó chuyển chúng về dạng tidy data.
 setwd("D:/GitHub/MTH10109-Mathematical-Statistics-Laboratory/")
 grades_wide <- read.csv("data/grades_wide.csv", header = TRUE)
 pivot_longer(data = grades_wide,
-             col = c("Toan", "Ly", "Hoa"),
+             cols = c("Toan", "Ly", "Hoa"),
              names_to = "Mon_hoc",
              values_to = "Diem")
 
 healths_wide <- read.csv("data/healths_wide.csv")
 pivot_longer(data = healths_wide,
-             col = starts_with("Tuan_"),
+             cols = starts_with("Tuan_"),
              names_to = "Tuan",
              values_to = "Chi_so")
 
 sales_wide <- read.csv("data/sales_wide.csv")
 pivot_longer(data = sales_wide,
-             col = X2021:X2023,
+             cols = X2021:X2023,
              names_to = "Nam",
              names_prefix = "X", # bỏ "X" dư thừa
              values_to = "Doanh_so")
